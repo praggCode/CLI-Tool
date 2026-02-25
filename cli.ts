@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
-const {Command} = require('commander');
+import axios from "axios";
+import * as dotenv from "dotenv";
+dotenv.config();
+
+const { Command } = require('commander');
 const program = new Command();
 program
     .command('greet <name>')
-    .action ((name) => {
+    .action((name) => {
         console.log(`Hello, ${name}!`);
     });
 
@@ -23,7 +27,7 @@ program
         console.log(`The difference between ${num1} and ${num2} is ${difference}.`);
     });
 
-program 
+program
     .command('multiply <num1> <num2>')
     .action((num1, num2) => {
         const product = parseFloat(num1) * parseFloat(num2);
@@ -38,6 +42,33 @@ program
         } else {
             const quotient = parseFloat(num1) / parseFloat(num2);
             console.log(`The quotient of ${num1} and ${num2} is ${quotient}.`);
+        }
+    });
+
+program
+    .command("pokemon")
+    .action(async () => {
+        try {
+            const randomId = Math.floor(Math.random() * 898) + 1;
+            if (!process.env.POKEAPI_URL) { console.error('Missing POKEAPI_URL in .env'); process.exit(1); }
+            const res = await axios.get(`${process.env.POKEAPI_URL}/${randomId}`);
+            console.log(res.data.name);
+        }
+        catch (error) {
+            console.error("An error occurred:", error);
+        }
+    })
+
+program
+    .command("joke")
+    .action(async () => {
+        try {
+            if (!process.env.JOKE_API_URL) { console.error('Missing JOKE_API_URL in .env'); process.exit(1); }
+            const res = await axios.get(process.env.JOKE_API_URL);
+            console.log(`${res.data.setup} - ${res.data.punchline}`);
+        }
+        catch (error) {
+            console.error("An error occurred:", error);
         }
     });
 
