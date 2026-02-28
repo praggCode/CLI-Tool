@@ -72,4 +72,48 @@ program
         }
     });
 
+program
+    .command("uppercase <string>")
+    .action((string) => {
+        console.log(string.toUpperCase());
+    });
+
+program
+    .command("lowercase <string>")
+    .action((string) => {
+        console.log(string.toLowerCase());
+    });
+
+program
+    .command("length <string>")
+    .action((string) => {
+        console.log(`The length of "${string}" is ${string.length}.`);
+    });
+
+program
+    .command("random <min> <max>")
+    .action((min, max) => {
+        const minNum = parseFloat(min);
+        const maxNum = parseFloat(max);
+        if (minNum > maxNum) {
+            console.log("Error: min must be less than or equal to max.");
+        } else {
+            const random = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            console.log(`Random number between ${min} and ${max}: ${random}`);
+        }
+    });
+
+program
+    .command("reverse <string>")
+    .action((string) => {
+        console.log(string.split("").reverse().join(""));
+    });
+
+program
+    .command("square <num>")
+    .action((num) => {
+        const parsedNum = parseFloat(num);
+        console.log(`The square of ${num} is ${parsedNum * parsedNum}.`);
+    });
+
 program.parse();
