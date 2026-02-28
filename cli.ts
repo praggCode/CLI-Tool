@@ -116,4 +116,52 @@ program
         console.log(`The square of ${num} is ${parsedNum * parsedNum}.`);
     });
 
+program
+    .command("github <username>")
+    .action(async (username) => {
+        try {
+            if (!process.env.GITHUB_API_URL) { console.error('Missing GITHUB_API_URL in .env'); process.exit(1); }
+            const res = await axios.get(`${process.env.GITHUB_API_URL}/${username}`);
+            // console.log(res)
+            console.log(`User: ${res.data.name || res.data.login}`);
+            console.log(`Bio: ${res.data.bio || 'N/A'}`);
+            console.log(`Followers: ${res.data.followers}`);
+            console.log(`Public Repos: ${res.data.public_repos}`);
+        }
+        catch (error) {
+            console.error("An error occurred fetching GitHub user:", error.message);
+        }
+    });
+
+program
+    .command("weather <city>")
+    .action(async (city) => {
+        try {
+            if (!process.env.WEATHER_API_URL) { console.error('Missing WEATHER_API_URL in .env'); process.exit(1); }
+            if (!process.env.WEATHER_API_KEY) { console.error('Missing WEATHER_API_KEY in .env, please add your OpenWeather API key'); process.exit(1); }
+            const res = await axios.get(`${process.env.WEATHER_API_URL}?q=${city}&appid=${process.env.WEATHER_API_KEY}&units=metric`);
+            console.log(`Weather in ${city}: ${res.data.weather[0].description}`);
+            console.log(`Temperature: ${res.data.main.temp}°C`);
+            console.log(`Humidity: ${res.data.main.humidity}%`);
+        }
+        catch (error) {
+            console.error("An error occurred fetching weather:", error.message);
+        }
+    });
+
+program
+    .command("quote")
+    .action(async () => {
+        try {
+            if (!process.env.QUOTE_API_URL) { console.error('Missing QUOTE_API_URL in .env'); process.exit(1); }
+            const res = await axios.get(process.env.QUOTE_API_URL);
+            const quoteContent = res.data.quote || res.data.content;
+            const quoteAuthor = res.data.author;
+            console.log(`"${quoteContent}"\n- ${quoteAuthor}`);
+        }
+        catch (error) {
+            console.error("An error occurred fetching quote:", error.message);
+        }
+    });
+
 program.parse();
